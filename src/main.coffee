@@ -39,6 +39,7 @@ exports.main = main = ->
   hono = new Hono
     url: options.hono
     tenant: options.tenant
+    filter: options.filter
   hono.on 'connected', ->
     console.log 'Connected to Hono'
   hono.on 'disconnected', ->
