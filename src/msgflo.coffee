@@ -34,6 +34,8 @@ class MsgFloConnector extends EventEmitter
       Promise.all definition.outports, (port) ->
         createQueue 'outqueue', port.queue, port.options
 
-  sendTelemetry: (participant, telemetry, callback) ->
+  send: (queue, payload) ->
+    sendTo = Promise.promisify @connection.sendTo.bind @connection
+    sendTo 'outqueue', queue, payload
 
 module.exports = MsgFloConnector

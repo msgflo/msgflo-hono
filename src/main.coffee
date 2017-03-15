@@ -53,4 +53,9 @@ exports.main = main = ->
       process.exit 1
     .then ->
       console.log "Registered component #{def.component}"
+  hono.on 'message', (msg) ->
+    msgflo.send msg.queue, msg.payload
+    .catch (err) ->
+      console.error err
+      process.exit 1
   hono.connect()

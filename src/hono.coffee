@@ -66,8 +66,14 @@ class HonoConnector extends EventEmitter
       return 'object'
     return 'all'
 
+  forwardData: (queue, payload) ->
+    @emit 'message',
+      queue: queue
+      payload: payload
+
   componentize: (deviceId, telemetry, lwm2m) ->
     deviceParts = deviceId.split '.'
+    toSend = {}
     componentDef =
       id: deviceId
       role: deviceId
@@ -78,23 +84,30 @@ class HonoConnector extends EventEmitter
       outports: []
     componentDef.lwm2m = true if lwm2m
     for key, val of telemetry
+      queue = "hono/#{@options.tenant}/#{deviceId}/#{key}"
       componentDef.outports.push
         id: key
-        queue: "hono/#{@options.tenant}/#{deviceId}/#{key}"
+        queue: queue
         type: @valueToPortType val
+      toSend[queue] = val
     if @components[deviceId]
       # Skip update if we exist
       return if @components[deviceId].lwm2m
       updated = JSON.stringify componentDef
       existing = JSON.stringify @components[deviceId]
-      return if updated is existing
+      if updated is existing
+        # Just forward the data
+        @forwardData key, val for key, val of toSend
+        return
     @components[deviceId] = componentDef
     @emit 'component', componentDef
+    # Forward after registering component
+    @forwardData key, val for key, val of toSend
 
   componentizeWithPath: (deviceId, path, telemetry) ->
     # TODO: We could use _X suffix as addressable port index
     port = path.split('/').pop()
-    toSend = {}
+    queue = "hono/#{@options.tenant}/#{deviceId}/#{port}"
     unless @components[deviceId]
       # We can do initial simple registration
       simplified = {}
@@ -104,13 +117,18 @@ class HonoConnector extends EventEmitter
     componentDef = JSON.parse JSON.stringify @components[deviceId]
     # See if this particular path has already been registered as port
     matchingPort = componentDef.outports.filter (p) -> p.id is port
-    return if matchingPort.length
+    if matchingPort.length
+      # Just forward the data
+      @forwardData queue, telemetry.value
+      return
     componentDef.outports.push
       id: port
-      queue: "hono/#{@options.tenant}/#{deviceId}/#{port}"
+      queue: queue
       type: @valueToPortType telemetry.value
     @components[deviceId] = componentDef
     @emit 'component', componentDef
+    # Forward after registering component
+    @forwardData queue, telemetry.value
 
   handleTelemetry: (msg, annotations) ->
     unless typeof msg is 'object'
