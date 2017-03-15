@@ -1,0 +1,34 @@
+{
+  "name": "msgflo-hono",
+  "version": "0.1.0",
+  "description": "Connect Eclipse Hono devices as MsgFlo participants",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/msgflo/msgflo-hono.git"
+  },
+  "keywords": [
+    "msgflo",
+    "hono",
+    "iot"
+  ],
+  "author": "Henri Bergius <henri.bergius@iki.fi>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/msgflo/msgflo-hono/issues"
+  },
+  "homepage": "https://github.com/msgflo/msgflo-hono#readme",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "coffee-script": "^1.12.4",
+    "commander": "^2.9.0",
+    "msgflo-nodejs": "^0.9.1",
+    "rhea": "^0.2.2"
+  },
+  "devDependencies": {
+    "mqtt": "^2.4.0"
+  }
+}
