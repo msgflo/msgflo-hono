@@ -111,7 +111,7 @@ class HonoConnector extends EventEmitter
     unless @components[deviceId]
       # We can do initial simple registration
       simplified = {}
-      simplified[port] = telemetry.value.properties.status
+      simplified[port] = telemetry.value.properties?.status or telemetry.value
       @componentize deviceId, simplified, true
     @components[deviceId].lwm2m = true
     componentDef = JSON.parse JSON.stringify @components[deviceId]
@@ -119,7 +119,7 @@ class HonoConnector extends EventEmitter
     matchingPort = componentDef.outports.filter (p) -> p.id is port
     if matchingPort.length
       # Just forward the data
-      @forwardData queue, telemetry.value.properties.status
+      @forwardData queue, telemetry.value.properties?.status or telemetry.value
       return
     componentDef.outports.push
       id: port
@@ -128,7 +128,7 @@ class HonoConnector extends EventEmitter
     @components[deviceId] = componentDef
     @emit 'component', componentDef
     # Forward after registering component
-    @forwardData queue, telemetry.value.properties.status
+    @forwardData queue, telemetry.value.properties?.status or telemetry.value
 
   handleTelemetry: (msg, annotations) ->
     unless typeof msg is 'object'
