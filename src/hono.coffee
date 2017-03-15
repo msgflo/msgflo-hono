@@ -66,7 +66,7 @@ class HonoConnector extends EventEmitter
       return 'object'
     return 'all'
 
-  componentize: (deviceId, telemetry) ->
+  componentize: (deviceId, telemetry, lwm2m) ->
     deviceParts = deviceId.split '.'
     componentDef =
       id: deviceId
@@ -76,6 +76,7 @@ class HonoConnector extends EventEmitter
       description: "#{deviceParts[0]} device on Hono"
       inports: []
       outports: []
+    componentDef.lwm2m = true if lwm2m
     for key, val of telemetry
       componentDef.outports.push
         id: key
@@ -83,9 +84,31 @@ class HonoConnector extends EventEmitter
         type: @valueToPortType val
     if @components[deviceId]
       # Skip update if we exist
+      return if @components[deviceId].lwm2m
       updated = JSON.stringify componentDef
       existing = JSON.stringify @components[deviceId]
       return if updated is existing
+    @components[deviceId] = componentDef
+    @emit 'component', componentDef
+
+  componentizeWithPath: (deviceId, path, telemetry) ->
+    # TODO: We could use _X suffix as addressable port index
+    port = path.split('/').pop()
+    toSend = {}
+    unless @components[deviceId]
+      # We can do initial simple registration
+      simplified = {}
+      simplified[port] = telemetry.value
+      @componentize deviceId, simplified, true
+    @components[deviceId].lwm2m = true
+    componentDef = JSON.parse JSON.stringify @components[deviceId]
+    # See if this particular path has already been registered as port
+    matchingPort = componentDef.outports.filter (p) -> p.id is port
+    return if matchingPort.length
+    componentDef.outports.push
+      id: port
+      queue: "hono/#{@options.tenant}/#{deviceId}/#{port}"
+      type: @valueToPortType telemetry.value
     @components[deviceId] = componentDef
     @emit 'component', componentDef
 
@@ -100,9 +123,9 @@ class HonoConnector extends EventEmitter
       # Device that sends plain JSON without semantics
       @componentize annotations.device_id, msg
       return
-    return
+
     # Device sending semantic telemetry, likely LWM2M
-    console.log annotations, JSON.stringify msg
+    @componentizeWithPath annotations.device_id, msg.path, msg
 
   subscribeTelemetry: ->
     options =
