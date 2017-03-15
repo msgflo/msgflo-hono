@@ -128,7 +128,7 @@ class HonoConnector extends EventEmitter
     @components[deviceId] = componentDef
     @emit 'component', componentDef
     # Forward after registering component
-    @forwardData queue, telemetry.value
+    @forwardData queue, telemetry.value.properties.status
 
   handleTelemetry: (msg, annotations) ->
     unless typeof msg is 'object'
