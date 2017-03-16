@@ -1,6 +1,6 @@
 {
   "name": "msgflo-hono",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Connect Eclipse Hono devices as MsgFlo participants",
   "main": "index.js",
   "scripts": {
