@@ -5,6 +5,10 @@ This tool discovers devices on an [Eclipse Hono](http://www.eclipse.org/hono/) s
 
 With MsgFlo you can easily connect any Hono-enabled sensors to any arbitrary data processing functionality, be it a [NoFlo](https://noflojs.org) graph, a Rust or Python program, or a MsgFlo-connected IoT actuator.
 
+For example, here is a [Bosch XDK](https://xdk.bosch-connectivity.com/) talking to a NoFlo graph, with [Flowhub IDE](https://flowhub.io) showing the live data flowing through:
+
+![XDK in MsgFlo](http://i.imgur.com/fVybIlq.png)
+
 ## Installation
 
 You need access to a Hono installation, and a MsgFlo-compatible message queue. You also need Node.js. Install the Hono MsgFlo connector with:
