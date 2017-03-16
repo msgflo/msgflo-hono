@@ -29,7 +29,7 @@ The msgflo-hono tool accepts the following arguments:
 Example:
 
 ```bash
-$ ./bin/msgflo-hono --hono amqp://username:password@hono.bosch-iot-suite.com:15672 --msgflo mqtt://localhost --tenant bcx --filter xdk
+$ msgflo-hono --hono amqp://username:password@hono.bosch-iot-suite.com:15672 --msgflo mqtt://localhost --tenant bcx --filter xdk
 ```
 
 ## Working principle
