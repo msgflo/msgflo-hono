@@ -5,7 +5,9 @@ Promise = require 'bluebird'
 class MsgFloConnector extends EventEmitter
   participants: {}
   connection: null
-  constructor: (@options) ->
+  constructor: (options) ->
+    super()
+    @options = options
 
   connect: ->
     return if @connection

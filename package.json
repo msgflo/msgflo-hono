@@ -23,7 +23,7 @@
   "homepage": "https://github.com/msgflo/msgflo-hono#readme",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "coffee-script": "^1.12.4",
+    "coffeescript": "^2.2.1",
     "commander": "^2.9.0",
     "msgflo-nodejs": "^0.9.1",
     "rhea": "^0.2.2"

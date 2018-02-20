@@ -21,6 +21,7 @@ class HonoConnector extends EventEmitter
   components: {}
   connection: null
   constructor: (@options) ->
+    super()
     @connectionOptions = prepareConnectionOptions @options.url
     @filter = new RegExp @options.filter or '.*'
 
